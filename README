@@ -1,0 +1,8 @@
+Example nim language program for the Game and Watch platform.
+
+Note that it does not support dynamic memory. Essentially you need to code in nim very similary to what you would do in C.
+See https://nim-lang.org for info on the nim language.
+
+Type "make" to build, "make flash" to flash and run on device.
+
+Based on https://github.com/kbeckmann/game-and-watch-retro-go

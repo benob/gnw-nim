@@ -1,8 +1,12 @@
-TARGET = gw_test_app
+TARGET = gw_nim_app
 OPT ?= -g -Og
+NIMOPT ?= --debugger:native
+
+NIM_SOURCES = \
+	src/test_app.nim \
+	src/gnw.nim
 
 C_SOURCES = \
-	Core/Src/test_app.c \
 	Core/Src/system_stm32h7xx.c \
 	Core/Src/stm32h7xx_it.c \
 	Core/Src/gw_buttons.c \
@@ -111,8 +115,10 @@ all: $(TARGET).elf $(TARGET)_extflash.bin $(TARGET)_intflash.bin
 
 OBJECTS=$(patsubst %.c,%.o,$(C_SOURCES)) $(patsubst %.s,%.o,$(ASM_SOURCES))
 
-$(TARGET).elf: $(OBJECTS)
-	$(CC) $^ $(LDFLAGS) -o $@
+$(TARGET).elf: $(OBJECTS) $(NIM_SOURCES)
+	@mkdir -p $(CURDIR)/nimcache
+	nim c $(NIMOPT) --nimcache=$(CURDIR)/nimcache $(NIM_SOURCES)
+	$(CC) $(OBJECTS) $(CURDIR)/nimcache/*.o $(LDFLAGS) -o $@
 	$(SZ) $@
 
 %.o: %.c 
