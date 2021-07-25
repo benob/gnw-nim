@@ -1,10 +1,12 @@
 TARGET = gw_nim_app
 OPT ?= -g -Og
-NIMOPT ?= --debugger:native
+NIMOPT ?= --debugger:native -d:danger
 
 NIM_SOURCES = \
 	src/test_app.nim \
 	src/gnw.nim
+
+NIM_TARGET = src/test_app.nim
 
 C_SOURCES = \
 	Core/Src/system_stm32h7xx.c \
@@ -117,7 +119,7 @@ OBJECTS=$(patsubst %.c,%.o,$(C_SOURCES)) $(patsubst %.s,%.o,$(ASM_SOURCES))
 
 $(TARGET).elf: $(OBJECTS) $(NIM_SOURCES)
 	@mkdir -p $(CURDIR)/nimcache
-	nim c $(NIMOPT) --nimcache=$(CURDIR)/nimcache $(NIM_SOURCES)
+	nim c $(NIMOPT) --nimcache=$(CURDIR)/nimcache $(NIM_TARGET)
 	$(CC) $(OBJECTS) $(CURDIR)/nimcache/*.o $(LDFLAGS) -o $@
 	$(SZ) $@
 
@@ -164,6 +166,7 @@ debug:
 .PHONY: debug
 
 clean:
+	rm -rf nimcache
 	rm -f $(TARGET).{map,elf} $(TARGET)_{ext,int}flash.bin
 	find . -name '*.o' -or -name '*.d' -or -name '*.su' | xargs rm
 #-include $(wildcard $(BUILD_DIR)/*.d)
